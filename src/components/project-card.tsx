@@ -8,11 +8,15 @@ import Link from "next/link";
 import { useState } from "react";
 import Markdown from "react-markdown";
 
+function isExternalHref(href?: string) {
+  return Boolean(href?.startsWith("http"));
+}
+
 function ProjectImage({ src, alt }: { src: string; alt: string }) {
   const [imageError, setImageError] = useState(false);
 
   if (!src || imageError) {
-    return <div className="w-full h-48 bg-muted" />;
+    return <ProjectPreview title={alt} />;
   }
 
   return (
@@ -22,6 +26,26 @@ function ProjectImage({ src, alt }: { src: string; alt: string }) {
       className="w-full h-48 object-cover"
       onError={() => setImageError(true)}
     />
+  );
+}
+
+function ProjectPreview({ title }: { title: string }) {
+  return (
+    <div className="flex h-48 w-full flex-col justify-between bg-muted p-5">
+      <div className="flex items-center justify-between">
+        <span className="rounded-md bg-background/80 px-2 py-1 text-[11px] font-medium text-muted-foreground">
+          AI Demo
+        </span>
+        <ArrowUpRight className="size-4 text-muted-foreground" aria-hidden />
+      </div>
+      <div className="grid gap-2">
+        <div className="h-2 w-16 rounded-full bg-foreground/20" />
+        <div className="h-2 w-28 rounded-full bg-foreground/15" />
+        <h4 className="text-lg font-semibold tracking-tight text-foreground">
+          {title}
+        </h4>
+      </div>
+    </div>
   );
 }
 
@@ -54,6 +78,8 @@ export function ProjectCard({
   links,
   className,
 }: Props) {
+  const isExternal = isExternalHref(href);
+
   return (
     <div
       className={cn(
@@ -64,8 +90,8 @@ export function ProjectCard({
       <div className="relative shrink-0">
         <Link
           href={href || "#"}
-          target="_blank"
-          rel="noopener noreferrer"
+          target={isExternal ? "_blank" : undefined}
+          rel={isExternal ? "noopener noreferrer" : undefined}
           className="block"
         >
           {video ? (
@@ -80,28 +106,32 @@ export function ProjectCard({
           ) : image ? (
             <ProjectImage src={image} alt={title} />
           ) : (
-            <div className="w-full h-48 bg-muted" />
+            <ProjectPreview title={title} />
           )}
         </Link>
         {links && links.length > 0 && (
           <div className="absolute top-2 right-2 flex flex-wrap gap-2">
-            {links.map((link, idx) => (
-              <Link
-                href={link.href}
-                key={idx}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Badge
-                  className="flex items-center gap-1.5 text-xs bg-black text-white hover:bg-black/90"
-                  variant="default"
+            {links.map((link, idx) => {
+              const isExternalLink = isExternalHref(link.href);
+
+              return (
+                <Link
+                  href={link.href}
+                  key={idx}
+                  target={isExternalLink ? "_blank" : undefined}
+                  rel={isExternalLink ? "noopener noreferrer" : undefined}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  {link.icon}
-                  {link.type}
-                </Badge>
-              </Link>
-            ))}
+                  <Badge
+                    className="flex items-center gap-1.5 text-xs bg-black text-white hover:bg-black/90"
+                    variant="default"
+                  >
+                    {link.icon}
+                    {link.type}
+                  </Badge>
+                </Link>
+              );
+            })}
           </div>
         )}
       </div>
@@ -113,8 +143,8 @@ export function ProjectCard({
           </div>
           <Link
             href={href || "#"}
-            target="_blank"
-            rel="noopener noreferrer"
+            target={isExternal ? "_blank" : undefined}
+            rel={isExternal ? "noopener noreferrer" : undefined}
             className="text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-sm"
             aria-label={`Open ${title}`}
           >
