@@ -64,8 +64,33 @@ function routeFromHtml(htmlPath) {
   return withoutExt;
 }
 
-function workerSource(routes) {
+function inlineStyles(html, cssBundle) {
+  let injected = false;
+
+  return html.replace(
+    /<link[^>]+rel="stylesheet"[^>]*>/gi,
+    () => {
+      if (injected) {
+        return "";
+      }
+
+      injected = true;
+      return `<style data-sites-inline-css>${cssBundle}</style>`;
+    }
+  );
+}
+
+function prepareHtml(html, cssBundle) {
+  return inlineStyles(html, cssBundle)
+    .replace(/<link[^>]+rel="preload"[^>]*>/gi, "")
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, "")
+    .replace(/style="opacity:0;filter:[^"]*?;transform:[^"]*?"/g, 'style="opacity:1"');
+}
+
+function workerSource(routes, pages) {
   return `const routes = new Map(${JSON.stringify(routes, null, 2)});
+
+const pages = new Map(${JSON.stringify(pages, null, 2)});
 
 const contentTypes = new Map(${JSON.stringify([...contentTypes], null, 2)});
 
@@ -76,6 +101,10 @@ function contentTypeFor(path) {
 }
 
 async function assetResponse(request, env, path) {
+  if (!env?.ASSETS) {
+    return new Response("Not found", { status: 404 });
+  }
+
   const url = new URL(request.url);
   url.pathname = path;
   const response = await env.ASSETS.fetch(new Request(url, request));
@@ -93,6 +122,22 @@ async function assetResponse(request, env, path) {
     status: response.status,
     statusText: response.statusText,
     headers,
+  });
+}
+
+function htmlResponse(assetPath, status = 200) {
+  const html = pages.get(assetPath);
+
+  if (!html) {
+    return new Response("Not found", { status: 404 });
+  }
+
+  return new Response(html, {
+    status,
+    headers: {
+      "content-type": "text/html; charset=utf-8",
+      "cache-control": "public, max-age=60",
+    },
   });
 }
 
@@ -122,11 +167,12 @@ export default {
     for (const route of candidateRoutes(url.pathname)) {
       const assetPath = routes.get(route);
       if (assetPath) {
-        return assetResponse(request, env, assetPath);
+        return htmlResponse(assetPath, route === "_not-found" ? 404 : 200);
       }
     }
 
-    return new Response("Not found", { status: 404 });
+    const notFound = routes.get("_not-found");
+    return notFound ? htmlResponse(notFound, 404) : new Response("Not found", { status: 404 });
   },
 };
 `;
@@ -142,15 +188,21 @@ if (await exists(publicDir)) {
 
 await cp(nextStaticDir, join(distDir, "_next", "static"), { recursive: true });
 
+const cssFiles = (await walk(nextStaticDir)).filter((file) => file.endsWith(".css"));
+const cssBundle = (await Promise.all(cssFiles.map((file) => readFile(file, "utf8")))).join("\n");
 const htmlFiles = (await walk(appDir)).filter((file) => file.endsWith(".html"));
 const routes = [];
+const pages = [];
 
 for (const htmlFile of htmlFiles) {
   const route = routeFromHtml(htmlFile);
   const outPath = join(pagesDir, `${route}.html`);
+  const html = prepareHtml(await readFile(htmlFile, "utf8"), cssBundle);
+
   await mkdir(dirname(outPath), { recursive: true });
-  await writeFile(outPath, await readFile(htmlFile, "utf8"));
+  await writeFile(outPath, html);
   routes.push([route, `/__static_pages/${route}.html`]);
+  pages.push([`/__static_pages/${route}.html`, html]);
 }
 
-await writeFile(join(serverDir, "index.js"), workerSource(routes));
+await writeFile(join(serverDir, "index.js"), workerSource(routes, pages));

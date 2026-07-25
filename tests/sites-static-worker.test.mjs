@@ -16,16 +16,34 @@ async function fetchFromDist(pathname) {
   });
 }
 
-test("Sites static worker serves the AI Interview Coach landing route", async () => {
+async function render(pathname) {
   const { default: worker } = await import(`${workerUrl}?t=${Date.now()}`);
-  const response = await worker.fetch(
-    new Request("https://example.test/demos/interview-assistant"),
+
+  return worker.fetch(
+    new Request(`https://example.test${pathname}`),
     {
       ASSETS: {
         fetch: (request) => fetchFromDist(new URL(request.url).pathname),
       },
     }
   );
+}
+
+test("Sites static worker serves the portfolio homepage without external assets", async () => {
+  const response = await render("/");
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type") ?? "", /text\/html/);
+
+  const html = await response.text();
+  assert.match(html, /My Projects/);
+  assert.match(html, /\/demos\/interview-assistant/);
+  assert.match(html, /<style data-sites-inline-css>/);
+  assert.doesNotMatch(html, /\/_next\/static\/chunks\/[^"]+\.css/);
+});
+
+test("Sites static worker serves the AI Interview Coach landing route", async () => {
+  const response = await render("/demos/interview-assistant");
 
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /text\/html/);
