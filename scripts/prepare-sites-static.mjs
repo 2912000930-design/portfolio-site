@@ -100,14 +100,22 @@ function contentTypeFor(path) {
   return contentTypes.get(extension) ?? "application/octet-stream";
 }
 
+async function fetchAsset(request, env, path) {
+  const url = new URL(request.url);
+  url.pathname = path;
+  return env.ASSETS.fetch(new Request(url, request));
+}
+
 async function assetResponse(request, env, path) {
   if (!env?.ASSETS) {
     return new Response("Not found", { status: 404 });
   }
 
-  const url = new URL(request.url);
-  url.pathname = path;
-  const response = await env.ASSETS.fetch(new Request(url, request));
+  let response = await fetchAsset(request, env, path);
+
+  if (response.status !== 200 && !path.startsWith("/dist/")) {
+    response = await fetchAsset(request, env, \`/dist\${path}\`);
+  }
 
   if (response.status !== 200) {
     return response;

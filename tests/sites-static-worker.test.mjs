@@ -16,6 +16,15 @@ async function fetchFromDist(pathname) {
   });
 }
 
+async function fetchFromArchiveRoot(pathname) {
+  try {
+    const filePath = join(root, pathname.replace(/^\//, ""));
+    return new Response(await readFile(filePath));
+  } catch {
+    return new Response("Not found", { status: 404 });
+  }
+}
+
 async function render(pathname) {
   const { default: worker } = await import(`${workerUrl}?t=${Date.now()}`);
 
@@ -24,6 +33,19 @@ async function render(pathname) {
     {
       ASSETS: {
         fetch: (request) => fetchFromDist(new URL(request.url).pathname),
+      },
+    }
+  );
+}
+
+async function renderWithArchiveRootAssets(pathname) {
+  const { default: worker } = await import(`${workerUrl}?t=${Date.now()}`);
+
+  return worker.fetch(
+    new Request(`https://example.test${pathname}`),
+    {
+      ASSETS: {
+        fetch: (request) => fetchFromArchiveRoot(new URL(request.url).pathname),
       },
     }
   );
@@ -48,4 +70,11 @@ test("Sites static worker serves the AI Interview Coach landing route", async ()
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /text\/html/);
   assert.match(await response.text(), /Master Your Interview with AI/);
+});
+
+test("Sites static worker serves public assets from archive-root ASSETS bindings", async () => {
+  const response = await renderWithArchiveRootAssets("/buildspace.jpg");
+
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type") ?? "", /image\/jpeg/);
 });
