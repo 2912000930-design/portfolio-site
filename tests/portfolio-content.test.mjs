@@ -49,6 +49,34 @@ test("AI demos use three distinct product interface layouts", async () => {
   assert.match(pageSource, /RecruitingDashboard/);
 });
 
+test("Knowledge base demo mirrors PandaWiki product capabilities", async () => {
+  const layoutSource = await readFile(
+    join(root, "src/components/demo/demo-layouts.tsx"),
+    "utf8"
+  );
+
+  for (const marker of [
+    /data-knowledge-panel="pandawiki-shell"/,
+    /data-knowledge-panel="wiki-portal"/,
+    /data-knowledge-panel="ai-qa-modal"/,
+    /data-knowledge-panel="source-import"/,
+    /data-knowledge-panel="model-config"/,
+    /data-knowledge-panel="analytics"/,
+    /PandaWiki/,
+    /URL Import/,
+    /Sitemap/,
+    /RSS/,
+    /File Upload/,
+    /AI Q&A/,
+    /AI Search/,
+    /DingTalk/,
+    /Feishu/,
+    /WeCom/,
+  ]) {
+    assert.match(layoutSource, marker);
+  }
+});
+
 test("Personal interview assistant includes productized interview tool panels", async () => {
   const layoutSource = await readFile(
     join(root, "src/components/demo/demo-layouts.tsx"),
@@ -86,7 +114,7 @@ test("Personal interview assistant has a Gank-style landing page before dashboar
   assert.match(landingSource, /Dashboard/);
 });
 
-test("Global portfolio dock is hidden on the interview product pages", async () => {
+test("Global portfolio dock is hidden on fullscreen demo product pages", async () => {
   const navbarSource = await readFile(
     join(root, "src/components/navbar.tsx"),
     "utf8"
@@ -94,6 +122,7 @@ test("Global portfolio dock is hidden on the interview product pages", async () 
 
   assert.match(navbarSource, /usePathname/);
   assert.match(navbarSource, /\/demos\/interview-assistant/);
+  assert.match(navbarSource, /\/demos\/knowledge-base/);
   assert.match(navbarSource, /return null/);
 });
 

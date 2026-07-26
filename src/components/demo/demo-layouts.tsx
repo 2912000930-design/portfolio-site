@@ -7,20 +7,28 @@ import {
   ArrowLeft,
   ArrowRight,
   BadgeCheck,
+  BarChart3,
   BookOpenCheck,
   Bot,
   BriefcaseBusiness,
   CheckCircle2,
   ClipboardList,
+  Database,
   FileCheck2,
   FileSearch,
+  FileText,
+  FolderOpen,
   Gauge,
+  Globe2,
+  Layers3,
   MessageSquareText,
   PanelRightOpen,
   RotateCcw,
   Search,
+  Settings,
   ShieldAlert,
   Sparkles,
+  UploadCloud,
   UserRound,
   UsersRound,
 } from "lucide-react";
@@ -351,114 +359,387 @@ export function KnowledgeWorkbench({ demo }: DemoLayoutProps) {
   const state = useDemoState(demo);
   const firstSection = state.result.sections[0];
   const secondSection = state.result.sections[1];
+  const thirdSection = state.result.sections[2];
+  const directoryGroups = [
+    {
+      title: "基础指南",
+      items: ["PandaWiki 介绍", "快速上手", "接入 AI 模型", "版本升级"],
+    },
+    {
+      title: "AI 问答机器人",
+      items: ["DingTalk", "Feishu", "WeCom", "API 调用机器人"],
+    },
+    {
+      title: "文档管理",
+      items: ["创建新文档", "导入文档", "文档处理状态", "发布 Wiki 站点"],
+    },
+  ];
+  const importPipelines = [
+    ["URL Import", "12 pages", "已学习"],
+    ["Sitemap", "84 nodes", "队列中"],
+    ["RSS", "6 feeds", "同步中"],
+    ["File Upload", "18 files", "已索引"],
+  ];
+  const analyticsRows = [
+    ["如何接入 AI 模型", "192.168.0.81", "3 小时前"],
+    ["支持给不同文档设置权限吗", "218.74.22.84", "4 小时前"],
+    ["怎么导入产品 FAQ", "192.168.0.81", "5 小时前"],
+  ];
 
   return (
     <main
       data-demo-layout="knowledge-workbench"
-      className="relative left-1/2 grid w-[min(1120px,calc(100vw-2rem))] -translate-x-1/2 gap-5"
+      data-knowledge-panel="pandawiki-shell"
+      className="relative left-1/2 w-[calc(100vw-1rem)] -translate-x-1/2 overflow-hidden bg-[#f4f6fb] px-3 py-4 text-slate-950 sm:w-[calc(100vw-2rem)] sm:px-5"
     >
-      <DemoTopbar
-        accent="from-emerald-500/15 via-background to-amber-500/10"
-        badge="Knowledge ops"
-        description="一个面向客服和业务团队的 RAG 工作台：先检索文档，再给出可追溯答案。"
-        icon={<BookOpenCheck className="size-4" aria-hidden />}
-        title={demo.title}
-      />
+      <section className="mx-auto grid min-h-[calc(100dvh-2rem)] w-[min(1440px,calc(100vw-1.5rem))] gap-4 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <aside className="grid content-between gap-5 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <div className="grid gap-5">
+            <div className="grid justify-items-center gap-3 border-b border-slate-100 pb-5">
+              <div className="grid size-14 place-items-center rounded-2xl bg-slate-950 text-lg font-semibold text-white">
+                PW
+              </div>
+              <div className="text-center">
+                <p className="text-lg font-semibold">PandaWiki</p>
+                <p className="text-xs text-slate-500">AI Knowledge Base</p>
+              </div>
+            </div>
 
-      <section className="grid gap-4 lg:grid-cols-[240px_minmax(0,1fr)_280px]">
-        <aside className="rounded-lg border bg-background p-4 shadow-sm">
-          <PanelHeading
-            icon={<FileSearch className="size-4" aria-hidden />}
-            title="知识库文档"
-          />
-          <div className="mt-4 grid gap-2">
-            {[
-              ["售后政策", "七天无理由、拆封审核"],
-              ["会员权益 FAQ", "优惠券、活动叠加"],
-              ["客服 SOP", "投诉、物流异常、升级"],
-              ["产品手册", "品类、规格、注意事项"],
-            ].map(([title, text]) => (
-              <div
-                key={title}
-                className="rounded-md border bg-muted/40 px-3 py-2"
+            <nav className="grid gap-2">
+              {[
+                ["文档", "Docs", <BookOpenCheck key="docs" className="size-4" />],
+                ["分析", "Analytics", <BarChart3 key="analytics" className="size-4" />],
+                ["设置", "Settings", <Settings key="settings" className="size-4" />],
+              ].map(([label, value, icon], index) => (
+                <div
+                  key={String(label)}
+                  className={cn(
+                    "flex items-center justify-between rounded-xl px-3 py-3 text-sm transition-colors",
+                    index === 0
+                      ? "bg-slate-950 text-white shadow-lg shadow-slate-950/10"
+                      : "text-slate-500 hover:bg-slate-100 hover:text-slate-950"
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    {icon}
+                    <span className="font-medium">{label}</span>
+                  </span>
+                  <span className="text-xs opacity-70">{value}</span>
+                </div>
+              ))}
+            </nav>
+          </div>
+
+          <div className="grid gap-3">
+            {["官方网站", "帮助文档", "交流群"].map((item) => (
+              <button
+                key={item}
+                className="h-10 rounded-xl border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                type="button"
               >
-                <p className="text-sm font-medium">{title}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{text}</p>
-              </div>
+                {item}
+              </button>
             ))}
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2 text-center text-xs font-medium text-emerald-700">
+              免费版 · v0.5.4
+            </div>
           </div>
         </aside>
 
-        <section className="rounded-lg border bg-card shadow-sm">
-          <div className="border-b bg-muted/40 p-4">
-            <div className="flex items-center gap-2 rounded-md border bg-background px-3 py-2">
-              <Search className="size-4 text-muted-foreground" aria-hidden />
-              <span className="text-sm text-muted-foreground">
-                Ask policy, FAQ, SOP, product docs...
-              </span>
+        <section className="grid gap-4">
+          <header className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-3">
+              <Link
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-500 transition hover:text-slate-950"
+                href="/#projects"
+              >
+                <ArrowLeft className="size-4" aria-hidden />
+                My Projects
+              </Link>
+              <div className="hidden h-8 w-px bg-slate-200 md:block" />
+              <div>
+                <p className="text-sm font-semibold">{demo.title}</p>
+                <p className="text-xs text-slate-500">
+                  PandaWiki inspired enterprise knowledge base demo
+                </p>
+              </div>
             </div>
-          </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge className="bg-blue-600 text-white hover:bg-blue-600">
+                AI Search
+              </Badge>
+              <Badge variant="outline">Public Wiki</Badge>
+              <Button className="h-10 rounded-xl bg-slate-950 px-4 text-white hover:bg-slate-800">
+                创建文档
+              </Button>
+            </div>
+          </header>
 
-          <div className="grid gap-4 p-4">
-            <SampleBar demo={demo} onSelect={state.useSample} />
+          <section className="grid gap-4 xl:grid-cols-[minmax(0,1.05fr)_420px]">
+            <div className="grid gap-4">
+              <section
+                data-knowledge-panel="wiki-portal"
+                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+              >
+                <div className="relative grid min-h-[360px] content-center gap-7 border-b border-slate-100 bg-[radial-gradient(circle_at_50%_0%,rgba(99,102,241,0.12),transparent_36%),linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)] px-5 py-10 text-center">
+                  <div className="mx-auto grid max-w-3xl gap-4">
+                    <Badge className="mx-auto w-fit bg-slate-950 text-white hover:bg-slate-950">
+                      PandaWiki Portal
+                    </Badge>
+                    <h1 className="text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
+                      欢迎使用企业 AI 知识库
+                    </h1>
+                    <p className="mx-auto max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
+                      汇集产品文档、技术文档、FAQ 和客服 SOP，用 AI Q&A 与 AI Search 帮团队快速找到可信答案。
+                    </p>
+                  </div>
 
-            <label className="grid gap-2">
-              <span className="text-sm font-medium">{demo.primaryLabel}</span>
-              <textarea
-                className="min-h-32 w-full resize-y rounded-md border bg-background px-3 py-2 text-sm leading-relaxed outline-none transition focus-visible:ring-1 focus-visible:ring-ring"
-                onChange={(event) => state.setPrimary(event.target.value)}
-                placeholder={demo.primaryPlaceholder}
-                value={state.primary}
+                  <div className="mx-auto grid w-full max-w-3xl gap-3">
+                    <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm">
+                      <Search className="size-5 text-slate-400" aria-hidden />
+                      <span className="min-w-0 flex-1 text-sm text-slate-400">
+                        Search docs or ask: {state.primary}
+                      </span>
+                      <Badge variant="outline">AI</Badge>
+                    </div>
+                    <div className="flex flex-wrap justify-center gap-2">
+                      {["如何配置 HTTPS", "PandaWiki 会消耗多少 Token", "如何接入飞书机器人"].map(
+                        (item) => (
+                          <button
+                            key={item}
+                            className="h-8 rounded-full border border-slate-200 bg-white px-3 text-xs text-slate-600 transition hover:border-blue-300 hover:text-blue-700"
+                            type="button"
+                          >
+                            {item}
+                          </button>
+                        )
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 p-4 md:grid-cols-2 2xl:grid-cols-3">
+                  {[
+                    ["PandaWiki 介绍", "面向企业的 AI 知识库搭建系统，支持文档门户、AI 问答和搜索。"],
+                    ["快速上手", "从安装、创建知识库、配置模型到发布 Wiki 站点的完整流程。"],
+                    ["接入百智云在线模型", "配置模型供应商、Token、推荐模型和调用限额。"],
+                    ["演示 Demo", "包含管理员账号、知识库地址、前台站点和自动重置数据。"],
+                    ["基础指南", "安装 PandaWiki、升级、权限、HTTPS、文档管理。"],
+                    ["AI 问答机器人", "接入 DingTalk、Feishu、WeCom，也支持 API 调用。"],
+                  ].map(([title, text], index) => (
+                    <article
+                      key={title}
+                      className="grid min-h-40 content-between rounded-xl border border-slate-200 bg-white p-4 transition hover:border-blue-200 hover:shadow-lg"
+                    >
+                      <div className="grid gap-3">
+                        <div className="flex items-center gap-2">
+                          {index % 2 === 0 ? (
+                            <FileText className="size-4 text-blue-600" aria-hidden />
+                          ) : (
+                            <FolderOpen className="size-4 text-amber-500" aria-hidden />
+                          )}
+                          <h2 className="text-base font-semibold">{title}</h2>
+                        </div>
+                        <p className="text-sm leading-6 text-slate-600">{text}</p>
+                      </div>
+                      <span className="justify-self-end text-xs font-medium text-blue-600">
+                        查看详情
+                      </span>
+                    </article>
+                  ))}
+                </div>
+              </section>
+
+              <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px]">
+                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <PanelHeading
+                      icon={<FolderOpen className="size-4 text-blue-600" aria-hidden />}
+                      title="目录 / 文档"
+                    />
+                    <Badge variant="outline">124 docs</Badge>
+                  </div>
+                  <div className="grid gap-3">
+                    {directoryGroups.map((group) => (
+                      <div key={group.title} className="grid gap-2">
+                        <div className="flex items-center gap-2 text-sm font-semibold">
+                          <FolderOpen className="size-4 text-amber-500" aria-hidden />
+                          {group.title}
+                        </div>
+                        <div className="grid gap-1.5 pl-6">
+                          {group.items.map((item) => (
+                            <div
+                              key={item}
+                              className="flex items-center justify-between border-b border-dashed border-slate-200 py-2 text-sm"
+                            >
+                              <span className="flex items-center gap-2 text-slate-700">
+                                <FileText className="size-4 text-blue-500" aria-hidden />
+                                {item}
+                              </span>
+                              <span className="text-xs text-slate-400">3 小时前</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <aside
+                  data-knowledge-panel="source-import"
+                  className="grid content-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+                >
+                  <PanelHeading
+                    icon={<UploadCloud className="size-4 text-emerald-600" aria-hidden />}
+                    title="多来源导入"
+                  />
+                  <p className="text-xs leading-6 text-slate-500">
+                    支持通过网页 URL、Sitemap、RSS 和离线文件导入内容，并自动进入学习队列。
+                  </p>
+                  {importPipelines.map(([type, count, status]) => (
+                    <div
+                      key={type}
+                      className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
+                    >
+                      <span className="text-sm font-medium">{type}</span>
+                      <span className="text-xs text-slate-500">
+                        {count} · {status}
+                      </span>
+                    </div>
+                  ))}
+                  <Progress label="Embedding progress" value="92%" />
+                  <Progress label="Citation coverage" value="100%" />
+                </aside>
+              </section>
+            </div>
+
+            <aside className="grid gap-4">
+              <section
+                data-knowledge-panel="ai-qa-modal"
+                className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+              >
+                <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3">
+                  <div className="flex gap-2">
+                    <Badge className="bg-blue-600 text-white hover:bg-blue-600">
+                      AI Q&A
+                    </Badge>
+                    <Badge variant="outline">仅搜索文档</Badge>
+                  </div>
+                  <Badge variant="secondary">Esc</Badge>
+                </div>
+                <div className="grid gap-4 p-4">
+                  <div className="justify-self-end rounded-xl bg-blue-600 px-4 py-2 text-sm text-white">
+                    {state.primary}
+                  </div>
+
+                  <div className="grid gap-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <div className="flex items-center justify-between">
+                      <PanelHeading
+                        icon={<Sparkles className="size-4 text-blue-600" aria-hidden />}
+                        title="正在回答"
+                      />
+                      <span className="text-xs text-slate-500">共找到 5 个结果</span>
+                    </div>
+                    <p className="text-sm leading-7 text-slate-700">
+                      {state.result.summary}
+                    </p>
+                    <div className="grid gap-3">
+                      <SectionList section={firstSection} />
+                      <SectionList section={secondSection} />
+                    </div>
+                    <SourceStrip sources={state.result.sources} />
+                  </div>
+
+                  <label className="grid gap-2">
+                    <span className="text-sm font-medium">{demo.primaryLabel}</span>
+                    <textarea
+                      className="min-h-24 w-full resize-y rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm leading-relaxed outline-none transition focus-visible:ring-1 focus-visible:ring-blue-500"
+                      onChange={(event) => state.setPrimary(event.target.value)}
+                      placeholder={demo.primaryPlaceholder}
+                      value={state.primary}
+                    />
+                  </label>
+                  <SampleBar demo={demo} onSelect={state.useSample} />
+                  <ActionRow onReset={state.resetDemo} onRun={state.runDemo} />
+                </div>
+              </section>
+
+              <section
+                data-knowledge-panel="model-config"
+                className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <PanelHeading
+                    icon={<Database className="size-4 text-violet-600" aria-hidden />}
+                    title="模型配置"
+                  />
+                  <Badge variant="outline">Baizhi Cloud</Badge>
+                </div>
+                <Progress label="Chat model" value="gpt-4.1-mini" />
+                <Progress label="Embedding model" value="text-embedding-3" />
+                <Progress label="Token budget" value="68%" />
+              </section>
+
+              <section
+                data-knowledge-panel="analytics"
+                className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <PanelHeading
+                    icon={<Gauge className="size-4 text-amber-600" aria-hidden />}
+                    title="访问分析"
+                  />
+                  <Badge variant="secondary">124 questions</Badge>
+                </div>
+                <div className="overflow-hidden rounded-xl border border-slate-200">
+                  {analyticsRows.map(([question, client, time]) => (
+                    <div
+                      key={`${question}-${time}`}
+                      className="grid grid-cols-[1fr_auto] gap-2 border-b border-slate-100 px-3 py-2 last:border-b-0"
+                    >
+                      <span className="text-xs font-medium text-slate-700">
+                        {question}
+                      </span>
+                      <span className="text-xs text-slate-400">{time}</span>
+                      <span className="text-[11px] text-slate-400">{client}</span>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </aside>
+          </section>
+
+          <section className="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm lg:grid-cols-[1fr_1fr_1fr]">
+            <div className="grid gap-2">
+              <PanelHeading
+                icon={<Globe2 className="size-4 text-blue-600" aria-hidden />}
+                title="发布渠道"
               />
-            </label>
-
-            <ActionRow onReset={state.resetDemo} onRun={state.runDemo} />
-
-            <div className="rounded-lg border bg-background p-4">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <PanelHeading
-                  icon={<Bot className="size-4" aria-hidden />}
-                  title="RAG Answer"
-                />
-                <Badge variant="secondary">带引用</Badge>
-              </div>
-              <p className="text-sm leading-relaxed text-muted-foreground">
-                {state.result.summary}
+              <p className="text-sm leading-6 text-slate-600">
+                Wiki 网站可嵌入官网，也能同步到 DingTalk、Feishu、WeCom 机器人。
               </p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                <SectionList section={firstSection} />
-                <SectionList section={secondSection} />
-              </div>
             </div>
-          </div>
+            <div className="grid gap-2">
+              <PanelHeading
+                icon={<Layers3 className="size-4 text-emerald-600" aria-hidden />}
+                title="学习状态"
+              />
+              <Progress label="Docs indexed" value="118 / 124" />
+              <Progress label="Failed chunks" value="0" />
+            </div>
+            <div className="grid gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3">
+              <PanelHeading
+                icon={<ShieldAlert className="size-4 text-amber-700" aria-hidden />}
+                title="人工确认边界"
+              />
+              <p className="text-xs leading-6 text-amber-800">
+                {state.result.caution ??
+                  "涉及退款、法务、权限变更等敏感动作时，只给建议并要求人工确认。"}
+              </p>
+              <SectionList section={thirdSection} />
+            </div>
+          </section>
         </section>
-
-        <aside className="grid content-start gap-3 rounded-lg border bg-background p-4 shadow-sm">
-          <PanelHeading
-            icon={<FileCheck2 className="size-4" aria-hidden />}
-            title="引用与边界"
-          />
-          <SourceStrip sources={state.result.sources} />
-          {state.result.caution ? (
-            <div className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-2">
-              <div className="mb-1 flex items-center gap-2 text-sm font-medium">
-                <ShieldAlert className="size-4" aria-hidden />
-                人工确认
-              </div>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                {state.result.caution}
-              </p>
-            </div>
-          ) : null}
-          <div className="grid gap-2 rounded-md border bg-muted/30 p-3">
-            <p className="text-xs font-medium text-muted-foreground">
-              检索状态
-            </p>
-            <Progress label="Top-K recall" value="86%" />
-            <Progress label="Citation coverage" value="100%" />
-            <Progress label="Escalation risk" value="Medium" />
-          </div>
-        </aside>
       </section>
     </main>
   );

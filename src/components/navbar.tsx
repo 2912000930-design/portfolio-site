@@ -15,7 +15,12 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/demos/interview-assistant")) {
+  const fullscreenDemoRoutes = [
+    "/demos/interview-assistant",
+    "/demos/knowledge-base",
+  ];
+
+  if (fullscreenDemoRoutes.some((route) => pathname.startsWith(route))) {
     return null;
   }
 
