@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const appDir = join(root, ".next", "server", "app");
 const nextStaticDir = join(root, ".next", "static");
+const nextMediaDir = join(nextStaticDir, "media");
 const publicDir = join(root, "public");
 const distDir = join(root, "dist");
 const pagesDir = join(distDir, "__static_pages");
@@ -87,17 +88,79 @@ function prepareHtml(html, cssBundle) {
     .replace(/style="opacity:0;filter:[^"]*?;transform:[^"]*?"/g, 'style="opacity:1"');
 }
 
-function workerSource(routes, pages) {
+function contentTypeForPath(path) {
+  const dot = path.lastIndexOf(".");
+  const extension = dot >= 0 ? path.slice(dot) : "";
+  return contentTypes.get(extension) ?? "application/octet-stream";
+}
+
+async function collectEmbeddedAssets() {
+  const assets = [];
+
+  if (await exists(publicDir)) {
+    for (const file of await walk(publicDir)) {
+      const pathname = `/${relative(publicDir, file).split(sep).join("/")}`;
+      assets.push([
+        pathname,
+        {
+          base64: (await readFile(file)).toString("base64"),
+          contentType: contentTypeForPath(pathname),
+        },
+      ]);
+    }
+  }
+
+  if (await exists(nextMediaDir)) {
+    for (const file of await walk(nextMediaDir)) {
+      const mediaPath = relative(nextMediaDir, file).split(sep).join("/");
+      const asset = {
+        base64: (await readFile(file)).toString("base64"),
+        contentType: contentTypeForPath(mediaPath),
+      };
+
+      assets.push([`/media/${mediaPath}`, asset]);
+      assets.push([`/_next/static/media/${mediaPath}`, asset]);
+    }
+  }
+
+  return assets;
+}
+
+function workerSource(routes, pages, embeddedAssets) {
   return `const routes = new Map(${JSON.stringify(routes, null, 2)});
 
 const pages = new Map(${JSON.stringify(pages, null, 2)});
 
 const contentTypes = new Map(${JSON.stringify([...contentTypes], null, 2)});
 
+const embeddedAssets = new Map(${JSON.stringify(embeddedAssets, null, 2)});
+
 function contentTypeFor(path) {
   const dot = path.lastIndexOf(".");
   const extension = dot >= 0 ? path.slice(dot) : "";
   return contentTypes.get(extension) ?? "application/octet-stream";
+}
+
+function embeddedAssetResponse(path) {
+  const asset = embeddedAssets.get(path);
+
+  if (!asset) {
+    return undefined;
+  }
+
+  const binary = atob(asset.base64);
+  const bytes = new Uint8Array(binary.length);
+
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  return new Response(bytes, {
+    headers: {
+      "content-type": asset.contentType,
+      "cache-control": "public, max-age=31536000, immutable",
+    },
+  });
 }
 
 async function fetchAsset(request, env, path) {
@@ -107,30 +170,36 @@ async function fetchAsset(request, env, path) {
 }
 
 async function assetResponse(request, env, path) {
-  if (!env?.ASSETS) {
-    return new Response("Not found", { status: 404 });
+  let response;
+
+  if (env?.ASSETS) {
+    response = await fetchAsset(request, env, path);
+
+    if (response.status !== 200 && !path.startsWith("/dist/")) {
+      response = await fetchAsset(request, env, \`/dist\${path}\`);
+    }
   }
 
-  let response = await fetchAsset(request, env, path);
+  if (response?.status === 200) {
+    const headers = new Headers(response.headers);
+    if (!headers.has("content-type")) {
+      headers.set("content-type", contentTypeFor(path));
+    }
 
-  if (response.status !== 200 && !path.startsWith("/dist/")) {
-    response = await fetchAsset(request, env, \`/dist\${path}\`);
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
   }
 
-  if (response.status !== 200) {
-    return response;
+  const embeddedResponse = embeddedAssetResponse(path);
+
+  if (embeddedResponse) {
+    return embeddedResponse;
   }
 
-  const headers = new Headers(response.headers);
-  if (!headers.has("content-type")) {
-    headers.set("content-type", contentTypeFor(path));
-  }
-
-  return new Response(response.body, {
-    status: response.status,
-    statusText: response.statusText,
-    headers,
-  });
+  return response ?? new Response("Not found", { status: 404 });
 }
 
 function htmlResponse(assetPath, status = 200) {
@@ -213,4 +282,6 @@ for (const htmlFile of htmlFiles) {
   pages.push([`/__static_pages/${route}.html`, html]);
 }
 
-await writeFile(join(serverDir, "index.js"), workerSource(routes, pages));
+const embeddedAssets = await collectEmbeddedAssets();
+
+await writeFile(join(serverDir, "index.js"), workerSource(routes, pages, embeddedAssets));

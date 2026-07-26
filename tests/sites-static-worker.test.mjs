@@ -51,6 +51,19 @@ async function renderWithArchiveRootAssets(pathname) {
   );
 }
 
+async function renderWithMissingAssets(pathname) {
+  const { default: worker } = await import(`${workerUrl}?t=${Date.now()}`);
+
+  return worker.fetch(
+    new Request(`https://example.test${pathname}`),
+    {
+      ASSETS: {
+        fetch: () => new Response("Not found", { status: 404 }),
+      },
+    }
+  );
+}
+
 test("Sites static worker serves the portfolio homepage without external assets", async () => {
   const response = await render("/");
 
@@ -77,4 +90,16 @@ test("Sites static worker serves public assets from archive-root ASSETS bindings
 
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /image\/jpeg/);
+});
+
+test("Sites static worker embeds critical public and media assets", async () => {
+  const publicImage = await renderWithMissingAssets("/buildspace.jpg");
+  const font = await renderWithMissingAssets(
+    "/media/caa3a2e1cccd8315-s.p.3b6cae6d.woff2"
+  );
+
+  assert.equal(publicImage.status, 200);
+  assert.match(publicImage.headers.get("content-type") ?? "", /image\/jpeg/);
+  assert.equal(font.status, 200);
+  assert.match(font.headers.get("content-type") ?? "", /font\/woff2/);
 });
