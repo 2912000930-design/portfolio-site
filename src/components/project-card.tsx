@@ -3,7 +3,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import Markdown from "react-markdown";
@@ -33,7 +33,8 @@ function ProjectPreview({ title }: { title: string }) {
   return (
     <div className="flex h-48 w-full flex-col justify-between bg-muted p-5">
       <div className="flex items-center justify-between">
-        <span className="rounded-md bg-background/80 px-2 py-1 text-[11px] font-medium text-muted-foreground">
+        <span className="rounded-md bg-background/80 px-2 py-1 text-[11px] font-medium text-muted-foreground inline-flex items-center gap-1">
+          <Sparkles className="size-3" aria-hidden />
           AI Demo
         </span>
         <ArrowUpRight className="size-4 text-muted-foreground" aria-hidden />

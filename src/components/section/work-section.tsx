@@ -9,14 +9,23 @@ import {
 } from "@/components/ui/accordion";
 import { DATA } from "@/data/resume";
 import { ChevronDown, ChevronRight } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-function LogoImage({ src, alt }: { src: string; alt: string }) {
+type LogoImageProps = {
+  src: string;
+  alt: string;
+  Icon?: LucideIcon;
+};
+
+function LogoImage({ src, alt, Icon }: LogoImageProps) {
   const [imageError, setImageError] = useState(false);
 
   if (!src || imageError) {
     return (
-      <div className="size-8 md:size-10 p-1 border rounded-full shadow ring-2 ring-border bg-muted flex-none" />
+      <div className="size-8 md:size-10 p-1 border rounded-full shadow ring-2 ring-border bg-muted flex-none flex items-center justify-center text-muted-foreground">
+        {Icon ? <Icon className="size-4 md:size-5" /> : null}
+      </div>
     );
   }
 
@@ -42,7 +51,7 @@ export default function WorkSection() {
           <AccordionTrigger className="hover:no-underline p-0 cursor-pointer transition-colors rounded-none group [&>svg]:hidden">
             <div className="flex items-center gap-x-3 justify-between w-full text-left">
               <div className="flex items-center gap-x-3 flex-1 min-w-0">
-                <LogoImage src={work.logoUrl} alt={work.company} />
+                <LogoImage src={work.logoUrl} alt={work.company} Icon={work.logoIcon} />
                 <div className="flex-1 min-w-0 gap-0.5 flex flex-col">
                   <div className="font-semibold leading-none flex items-center gap-2">
                     {work.company}
