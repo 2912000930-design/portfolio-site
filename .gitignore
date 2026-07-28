@@ -27,6 +27,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 next-dev.*.log
+next-start.*.log
+cloudflared.*.log
+*.out.log
+*.err.log
 /reference-shots
 
 # local env files
@@ -37,6 +41,7 @@ next-dev.*.log
 
 # vercel
 .vercel
+.vercel/
 
 # typescript
 *.tsbuildinfo
