@@ -24,9 +24,7 @@ export default function HackathonsSection() {
           </div>
         </div>
         <Timeline>
-          {DATA.hackathons.map((hackathon) => {
-            const Icon = hackathon.logoIcon;
-            return (
+          {DATA.hackathons.map((hackathon) => (
             <TimelineItem key={hackathon.title + hackathon.dates} className="w-full flex items-start justify-between gap-10">
               <TimelineConnectItem className="flex items-start justify-center">
                 {hackathon.image ? (
@@ -36,9 +34,7 @@ export default function HackathonsSection() {
                     className="size-10 bg-card z-10 shrink-0 overflow-hidden p-1 border rounded-full shadow ring-2 ring-border object-contain flex-none"
                   />
                 ) : (
-                  <div className="size-10 bg-card z-10 shrink-0 overflow-hidden p-1 border rounded-full shadow ring-2 ring-border flex-none flex items-center justify-center text-muted-foreground">
-                    {Icon ? <Icon className="size-5" /> : null}
-                  </div>
+                  <div className="size-10 bg-card z-10 shrink-0 overflow-hidden p-1 border rounded-full shadow ring-2 ring-border flex-none" />
                 )}
               </TimelineConnectItem>
               <div className="flex flex-1 flex-col justify-start gap-2 min-w-0">
@@ -75,8 +71,7 @@ export default function HackathonsSection() {
                 )}
               </div>
             </TimelineItem>
-            );
-          })}
+          ))}
         </Timeline>
       </div>
     </section>

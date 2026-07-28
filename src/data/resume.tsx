@@ -11,14 +11,6 @@ import {
   Bot,
   GitBranch,
   Languages,
-  UtensilsCrossed,
-  Landmark,
-  Building2,
-  GraduationCap,
-  Stethoscope,
-  Lock,
-  Trophy,
-  MapPin,
   Sparkles,
 } from "lucide-react";
 import { NextjsIconDark } from "@/components/ui/svgs/nextjsIconDark";
@@ -88,8 +80,7 @@ export const DATA = {
       badges: [],
       location: "上海",
       title: "数据分析实习生",
-      logoUrl: "",
-      logoIcon: UtensilsCrossed,
+      logoUrl: "/logos/baixiang.svg",
       start: "2026.01",
       end: "2026.03",
       description:
@@ -101,8 +92,7 @@ export const DATA = {
       badges: [],
       location: "上海",
       title: "金融工程实习生",
-      logoUrl: "",
-      logoIcon: Landmark,
+      logoUrl: "/logos/guosheng.svg",
       start: "2025.07",
       end: "2025.09",
       description:
@@ -114,8 +104,7 @@ export const DATA = {
       badges: [],
       location: "上海",
       title: "设备运营实习生",
-      logoUrl: "",
-      logoIcon: Building2,
+      logoUrl: "/logos/jiujing.svg",
       start: "2024.07",
       end: "2024.08",
       description:
@@ -127,8 +116,7 @@ export const DATA = {
       school: "香港科技大学",
       href: "https://www.ust.hk",
       degree: "信息与网络安全管理 硕士",
-      logoUrl: "",
-      logoIcon: GraduationCap,
+      logoUrl: "/logos/hkust.svg",
       start: "2026.09",
       end: "2027.06",
     },
@@ -136,8 +124,7 @@ export const DATA = {
       school: "北师香港浸会大学",
       href: "https://www.uic.edu.cn",
       degree: "计算机科学与技术 本科",
-      logoUrl: "",
-      logoIcon: GraduationCap,
+      logoUrl: "/logos/uic.svg",
       start: "2022.09",
       end: "2026.06",
     },
@@ -231,8 +218,7 @@ export const DATA = {
       location: "大模型应用 / NLP",
       description:
         "基于 Qwen3-4B 基座模型，使用医疗问答数据集进行 LoRA 参数高效微调，构建可回答常见医学问题的中文医疗问答模型。完成数据清洗、指令格式对齐、训练超参调优与效果评估，输出可部署的 LoRA 权重与推理脚本。",
-      image: "",
-      logoIcon: Stethoscope,
+      image: "/logos/medical-llm.svg",
       links: [] as HackathonLink[],
     },
     {
@@ -241,8 +227,7 @@ export const DATA = {
       location: "数据分析 / Web 平台",
       description:
         "面向高校教学场景的端到端教育数据分析平台：采集学生成绩、行为与课程数据，构建数据仓库与可视化看板，支持学习预警、学生画像与课程对比分析。后端 Python + SQL，前端 React 可视化，覆盖从原始数据到教学决策的完整链路。",
-      image: "",
-      logoIcon: GraduationCap,
+      image: "/logos/edba.svg",
       links: [] as HackathonLink[],
     },
     {
@@ -251,8 +236,7 @@ export const DATA = {
       location: "信息安全 / 密码学",
       description:
         "完整实现 RSA-4096 密钥生成、大数模幂运算、PKCS#1 v1.5 填充与签名验证流程，对比不同实现（素数检测、蒙哥马利约减、中国剩余定理加速）的性能差异，并通过自测用例验证加解密正确性与防篡改能力。",
-      image: "",
-      logoIcon: Lock,
+      image: "/logos/rsa.svg",
       links: [] as HackathonLink[],
     },
     {
@@ -261,8 +245,7 @@ export const DATA = {
       location: "数学建模 / 时序分析",
       description:
         "针对网球比赛中的 momentum（势头）问题建立时序模型，量化选手在连续得分阶段的动量波动，使用 Python（NumPy / pandas / matplotlib）进行数据拟合与可视化，输出完整的 MCM 论文与可复现实验脚本。",
-      image: "",
-      logoIcon: Trophy,
+      image: "/logos/mcm.svg",
       links: [] as HackathonLink[],
     },
     {
@@ -271,8 +254,7 @@ export const DATA = {
       location: "博弈论 / 机制设计",
       description:
         "基于机制设计与博弈论，构建一组激励相容的房屋选址规则，在信息不对称下最大化整体社会福利并抑制策略性行为；使用 Python 进行多智能体仿真，对比不同分配规则在效率、公平与策略稳定性上的表现。",
-      image: "",
-      logoIcon: MapPin,
+      image: "/logos/mechanism.svg",
       links: [] as HackathonLink[],
     },
   ],
