@@ -27,7 +27,7 @@ type HackathonLink = {
 export const DATA = {
   name: "许广桓 Daniel",
   initials: "XG",
-  url: "https://portfolio-site-seven-mocha.vercel.app",
+  url: "http://95.41.51.17",
   location: "中国 · 珠海 / 香港",
   locationLink: "https://www.google.com/maps/place/Hong+Kong",
   description:
