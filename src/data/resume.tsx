@@ -183,32 +183,6 @@ export const DATA = {
       image: "",
       video: "",
     },
-    {
-      title: "简历筛选 / 招聘助手",
-      href: "/demos/recruiting-assistant",
-      dates: "AI Portfolio Demo",
-      active: true,
-      description:
-        "输入 JD 和候选人简历后，辅助 HR 生成匹配度、强匹配点、风险点和建议面试问题，不做自动录用或淘汰。",
-      technologies: [
-        "Next.js",
-        "Typescript",
-        "Structured Output",
-        "Scoring Rubric",
-        "TailwindCSS",
-        "Shadcn UI",
-        "Magic UI",
-      ],
-      links: [
-        {
-          type: "Live Demo",
-          href: "/demos/recruiting-assistant",
-          icon: <Sparkles className="size-3" />,
-        },
-      ],
-      image: "",
-      video: "",
-    },
   ],
   // 复用 HackathonsSection 的时间轴样式，作为“项目经历”展示
   hackathons: [

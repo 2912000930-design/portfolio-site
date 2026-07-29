@@ -10,7 +10,6 @@ import {
   BarChart3,
   BookOpenCheck,
   Bot,
-  BriefcaseBusiness,
   CheckCircle2,
   ClipboardList,
   Database,
@@ -740,131 +739,6 @@ export function KnowledgeWorkbench({ demo }: DemoLayoutProps) {
             </div>
           </section>
         </section>
-      </section>
-    </main>
-  );
-}
-
-export function RecruitingDashboard({ demo }: DemoLayoutProps) {
-  const state = useDemoState(demo);
-  const strongMatch = state.result.sections[0];
-  const risks = state.result.sections[1];
-  const questions = state.result.sections[2];
-
-  return (
-    <main
-      data-demo-layout="recruiting-dashboard"
-      className="relative left-1/2 grid w-[min(1120px,calc(100vw-2rem))] -translate-x-1/2 gap-5"
-    >
-      <DemoTopbar
-        accent="from-violet-500/15 via-background to-cyan-500/10"
-        badge="Recruiting intelligence"
-        description="把 JD 与简历变成结构化对比，帮助 HR 更快准备面试，而不是自动决定录用。"
-        icon={<BriefcaseBusiness className="size-4" aria-hidden />}
-        title={demo.title}
-      />
-
-      <section className="grid gap-3 sm:grid-cols-4">
-        <StatCard
-          icon={<Gauge className="size-4" />}
-          label="综合匹配"
-          value={state.result.score ?? "82/100"}
-        />
-        <StatCard
-          icon={<BadgeCheck className="size-4" />}
-          label="强证据"
-          value={`${strongMatch?.items.length ?? 0} 项`}
-        />
-        <StatCard
-          icon={<ShieldAlert className="size-4" />}
-          label="风险点"
-          value={`${risks?.items.length ?? 0} 项`}
-        />
-        <StatCard
-          icon={<ClipboardList className="size-4" />}
-          label="面试题"
-          value={`${questions?.items.length ?? 0} 个`}
-        />
-      </section>
-
-      <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="grid gap-4">
-          <div className="rounded-lg border bg-card p-4 shadow-sm">
-            <div className="mb-4 flex items-center justify-between gap-3">
-              <PanelHeading
-                icon={<UsersRound className="size-4" aria-hidden />}
-                title="JD / 简历输入"
-              />
-              <Badge variant="outline">Human-in-the-loop</Badge>
-            </div>
-
-            <SampleBar demo={demo} onSelect={state.useSample} />
-
-            <div className="mt-4 grid gap-3 md:grid-cols-2">
-              <label className="grid gap-2">
-                <span className="text-sm font-medium">{demo.primaryLabel}</span>
-                <textarea
-                  className="min-h-48 w-full resize-y rounded-md border bg-background px-3 py-2 text-sm leading-relaxed outline-none transition focus-visible:ring-1 focus-visible:ring-ring"
-                  onChange={(event) => state.setPrimary(event.target.value)}
-                  placeholder={demo.primaryPlaceholder}
-                  value={state.primary}
-                />
-              </label>
-
-              <label className="grid gap-2">
-                <span className="text-sm font-medium">
-                  {demo.secondaryLabel}
-                </span>
-                <textarea
-                  className="min-h-48 w-full resize-y rounded-md border bg-background px-3 py-2 text-sm leading-relaxed outline-none transition focus-visible:ring-1 focus-visible:ring-ring"
-                  onChange={(event) => state.setSecondary(event.target.value)}
-                  placeholder={demo.secondaryPlaceholder}
-                  value={state.secondary}
-                />
-              </label>
-            </div>
-
-            <div className="mt-4">
-              <ActionRow onReset={state.resetDemo} onRun={state.runDemo} />
-            </div>
-          </div>
-
-          <div className="grid gap-3 md:grid-cols-3">
-            <AnalysisColumn
-              icon={<CheckCircle2 className="size-4" />}
-              section={strongMatch}
-            />
-            <AnalysisColumn
-              icon={<ShieldAlert className="size-4" />}
-              section={risks}
-            />
-            <AnalysisColumn
-              icon={<MessageSquareText className="size-4" />}
-              section={questions}
-            />
-          </div>
-        </div>
-
-        <aside className="grid content-start gap-3 rounded-lg border bg-background p-4 shadow-sm">
-          <PanelHeading
-            icon={<Sparkles className="size-4" aria-hidden />}
-            title="AI 初筛摘要"
-          />
-          <div className="rounded-lg border bg-muted/30 p-4">
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              {state.result.summary}
-            </p>
-          </div>
-          <Progress label="岗位技能覆盖" value="High" />
-          <Progress label="项目证据强度" value="Medium+" />
-          <Progress label="决策自动化" value="Blocked" />
-          <SourceStrip sources={state.result.sources} />
-          {state.result.caution ? (
-            <p className="rounded-md border border-border bg-muted/30 px-3 py-2 text-xs leading-relaxed text-muted-foreground">
-              {state.result.caution}
-            </p>
-          ) : null}
-        </aside>
       </section>
     </main>
   );

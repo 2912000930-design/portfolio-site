@@ -1,7 +1,6 @@
 export type DemoId =
   | "interview-assistant"
-  | "knowledge-base"
-  | "recruiting-assistant";
+  | "knowledge-base";
 
 export type DemoSample = {
   label: string;
@@ -37,14 +36,6 @@ export type DemoResult = {
   sources: string[];
   caution?: string;
 };
-
-const sampleJd = `岗位：AI 产品经理
-职责：负责企业知识库、智能客服和招聘辅助工具的需求分析、原型设计、Prompt 策略、效果评估和跨团队落地。
-要求：理解 RAG、Agent、结构化输出、AI 评估指标，能把业务流程拆成可上线的产品模块。`;
-
-const sampleResume = `候选人：AI 产品 / AI 应用方向
-经历：设计过个人 AI 面试助手、企业知识库 RAG Demo、招聘筛选助手，关注真实业务场景、可解释输出和人工确认边界。
-能力：需求拆解、用户流程、Prompt Engineering、RAG 产品设计、结构化分析、前端 Demo 表达。`;
 
 export const DEMOS: Record<DemoId, DemoConfig> = {
   "interview-assistant": {
@@ -107,46 +98,6 @@ export const DEMOS: Record<DemoId, DemoConfig> = {
     ],
     techNotes: ["Retrieval augmented generation", "Source citation", "Escalation guardrail"],
   },
-  "recruiting-assistant": {
-    id: "recruiting-assistant",
-    title: "简历筛选 / 招聘助手",
-    eyebrow: "Recruiting assistant",
-    description:
-      "输入 JD 和候选人简历，辅助生成匹配度、强匹配点、风险点和建议面试问题。",
-    problem:
-      "HR 和招聘经理初筛简历耗时，且容易只看关键词，忽略项目证据、风险点和追问方向。",
-    targetUser: "HR、招聘经理、业务面试官",
-    value:
-      "把 JD 和简历转成结构化对比，帮助面试官更快准备面试，但不自动淘汰或录用候选人。",
-    primaryLabel: "JD 文本",
-    primaryPlaceholder: "粘贴岗位职责、要求和加分项",
-    secondaryLabel: "候选人简历文本",
-    secondaryPlaceholder: "粘贴候选人的项目经历、技能和背景",
-    defaultPrimary: sampleJd,
-    defaultSecondary: sampleResume,
-    samples: [
-      {
-        label: "AI 产品岗",
-        primary: sampleJd,
-        secondary: sampleResume,
-      },
-      {
-        label: "RAG 项目岗",
-        primary:
-          "岗位：AI 应用产品经理\n职责：设计企业知识库、智能问答、引用溯源和效果评估流程。\n要求：有 RAG、Prompt、用户反馈闭环经验。",
-        secondary:
-          "候选人：做过企业知识库 RAG Demo，关注引用来源、人工确认、客服回复话术和评估指标。",
-      },
-      {
-        label: "招聘场景岗",
-        primary:
-          "岗位：招聘产品经理\n职责：优化简历初筛、JD 匹配、面试题生成和候选人体验。\n要求：理解招聘流程、AI 辅助决策边界和公平性风险。",
-        secondary:
-          "候选人：设计过简历筛选助手，输出匹配点、风险点、追问问题，并强调不做自动淘汰。",
-      },
-    ],
-    techNotes: ["Structured output", "Scoring rubric", "Human-in-the-loop decision"],
-  },
 };
 
 export function getDemo(id: DemoId) {
@@ -169,7 +120,7 @@ export function generateDemoResult(
     return generateKnowledgeResult(primary);
   }
 
-  return generateRecruitingResult(primary, secondary);
+  return generateInterviewResult(primary);
 }
 
 function generateInterviewResult(input: string): DemoResult {
@@ -181,7 +132,7 @@ function generateInterviewResult(input: string): DemoResult {
         {
           title: "优势",
           items: [
-            "能把面试、知识库、招聘这些真实工作流程产品化。",
+            "能把面试、知识库这些真实工作流程产品化。",
             "关注引用来源、人工确认和结构化输出，不只停留在聊天框。",
           ],
         },
@@ -204,7 +155,7 @@ function generateInterviewResult(input: string): DemoResult {
       {
         title: "匹配理由",
         items: [
-          "作品集覆盖个人面试、企业知识库、招聘筛选三个真实场景。",
+          "作品集覆盖个人面试、企业知识库两个真实场景。",
           "每个 Demo 都有明确用户、输入输出、价值和边界，而不是泛聊天机器人。",
           "技术表达覆盖 RAG、Prompt、结构化输出和人工确认流程。",
         ],
@@ -213,12 +164,12 @@ function generateInterviewResult(input: string): DemoResult {
         title: "可负责模块",
         items: [
           "AI 产品需求分析和 Demo 原型设计。",
-          "知识库问答、招聘辅助、客服辅助等场景的流程设计。",
+          "知识库问答、面试辅助、客服辅助等场景的流程设计。",
           "AI 输出质量评估、失败兜底和业务复盘。",
         ],
       },
     ],
-    sources: ["个人 AI 面试助手", "企业知识库 RAG Demo", "招聘助手 Demo"],
+    sources: ["个人 AI 面试助手", "企业知识库 RAG Demo"],
   };
 }
 
@@ -291,44 +242,5 @@ function generateKnowledgeResult(input: string): DemoResult {
       },
     ],
     sources: ["配送政策 - 时效承诺", "客服 SOP - 物流异常处理"],
-  };
-}
-
-function generateRecruitingResult(jd: string, resume: string): DemoResult {
-  const hasRag = jd.includes("rag") || resume.includes("rag");
-  const hasProduct = jd.includes("产品") || resume.includes("产品");
-  const score = hasRag && hasProduct ? "82/100" : "74/100";
-
-  return {
-    score,
-    summary:
-      "候选人与 AI 产品 / AI 应用岗位匹配度较高，尤其适合需要快速做 Demo、梳理场景和设计评估闭环的团队。",
-    sections: [
-      {
-        title: "强匹配点",
-        items: [
-          "有 AI 面试助手、企业知识库 RAG、招聘助手等场景型项目。",
-          "能把业务问题拆成用户、输入、输出、边界和评估指标。",
-          "关注人机协作，不把 AI 输出直接当作最终决策。",
-        ],
-      },
-      {
-        title: "风险点",
-        items: [
-          "简历中仍需要补充真实用户反馈、上线数据或 A/B 测试结果。",
-          "如果岗位要求深度模型训练，需要进一步确认算法和工程深度。",
-        ],
-      },
-      {
-        title: "建议面试问题",
-        items: [
-          "你会如何评估 RAG 答案的准确性和可追溯性？",
-          "招聘助手如何避免关键词偏见和过度自动化决策？",
-          "如果业务方只想要一个聊天机器人，你会如何重新定义需求？",
-        ],
-      },
-    ],
-    sources: ["JD 关键要求", "候选人项目经历", "AI 辅助决策边界"],
-    caution: "该结果只用于辅助面试准备，不应用于自动淘汰或录用。",
   };
 }
