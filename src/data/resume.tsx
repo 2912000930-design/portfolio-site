@@ -34,7 +34,7 @@ export const DATA = {
     "数据科学与 AI 算法方向实习生 · 计算机科学与技术本科 · 专注数据分析、量化研究与大模型应用落地。",
   summary:
     "北师香港浸会大学计算机科学与技术专业本科（2026 届），即将入读香港科技大学信息与网络安全管理硕士。求职方向为数据分析 / 数据开发 / AI 算法实习生。\n\n[本科期间系统学习算法、数据结构与机器学习](/#education)，并在证券、食品、文化科技三段实习中分别承担金融工程建模、业务数据分析与设备运营工作；课外围绕大模型微调、RAG 检索增强、教育数据分析与博弈机制设计完成多个独立项目，均可在本站 [AI 作品集](/#projects) 中直接体验。雅思 7.5，熟悉 ChatGPT / DeepSeek / Codex 等 AI 工具在生产与研究流程中的落地。",
-  avatarUrl: "/me.png",
+  avatarUrl: "/me.jpg",
   skills: [
     { name: "Python", icon: Python },
     { name: "NumPy / Pandas", icon: Table },
